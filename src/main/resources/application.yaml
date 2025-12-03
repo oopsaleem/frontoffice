@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: frontoffice
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:frontoffice
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
