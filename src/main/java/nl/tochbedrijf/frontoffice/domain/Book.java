@@ -14,6 +14,7 @@ public class Book {
     private Long id;
     private String title;
     private String author;
+    private String internalCode;
 
     // constructors, getters, setters
     public Book() {}
@@ -23,6 +24,14 @@ public class Book {
         this.title = title;
         this.author = author;
     }
+
+    public Book(Long id, String title, String author, String internalCode) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.internalCode = internalCode;
+    }
+
 
     public Long getId() {
         return id;
@@ -46,5 +55,23 @@ public class Book {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public String getInternalCode() {
+        return internalCode;
+    }
+
+    public void setInternalCode(String internalCode) {
+        this.internalCode = internalCode;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", internalCode='" + internalCode + '\'' +
+                '}';
     }
 }

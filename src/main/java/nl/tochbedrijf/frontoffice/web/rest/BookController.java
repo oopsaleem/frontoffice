@@ -1,8 +1,7 @@
 package nl.tochbedrijf.frontoffice.web.rest;
 
-import nl.tochbedrijf.frontoffice.domain.Book;
-import nl.tochbedrijf.frontoffice.repository.BookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.tochbedrijf.frontoffice.services.BookService;
+import nl.tochbedrijf.frontoffice.services.dtos.BookDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,48 +19,43 @@ import java.util.List;
 @RequestMapping("/api/book")
 public class BookController {
 
-    // 1. Inject BookRepository into BookController
-    @Autowired
-    private BookRepository bookRepository;
+    private final BookService bookService;
 
-    // 2. Replace in-memory list with repository calls
-    // 3. Update GET endpoints to use repository.findAll()
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
+
     @GetMapping
-    public List<Book> getAllBook() {
-        return bookRepository.findAll();
+    public List<BookDTO> getAllBook() {
+        return bookService.getAll();
     }
 
     @GetMapping("/{id}")
-    public Book getBookById(@PathVariable Long id) {
-        return bookRepository.findById(id).orElse(null);
+    public BookDTO getBookById(@PathVariable Long id) {
+        return bookService.getById(id);
+    }
+
+    @GetMapping("/titleContains/{title}")
+    public List<BookDTO> getBooksByTitleContains(@PathVariable String title) {
+        return bookService.findByTitleContains(title);
     }
 
     // 4. Update POST endpoint to use repository.save()
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Book createBook(@RequestBody Book book) {
-        return bookRepository.save(book);
+    public BookDTO createBook(@RequestBody BookDTO bookDTO) {
+        return bookService.create(bookDTO);
     }
 
     // 5. Update PUT endpoint to use repository.save()
     @PutMapping("/{id}")
-    public Book updateBook(@PathVariable Long id, @RequestBody Book updatedBook) {
-        return bookRepository.findById(id)
-                .map(book -> {
-                    book.setTitle(updatedBook.getTitle());
-                    book.setAuthor(updatedBook.getAuthor());
-                    return bookRepository.save(book);
-                })
-                .orElseThrow(() -> new IllegalArgumentException("Book not found"));
+    public BookDTO updateBook(@PathVariable Long id, @RequestBody BookDTO updatedBookDTO) {
+        return bookService.update(id, updatedBookDTO);
     }
 
-    // 6. Update DELETE endpoint to use repository.deleteById()
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBook(@PathVariable Long id) {
-        if (!bookRepository.existsById(id)) {
-            throw new IllegalArgumentException("Book not found");
-        }
-        bookRepository.deleteById(id);
+        bookService.delete(id);
     }
 }
