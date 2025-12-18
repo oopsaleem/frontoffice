@@ -1,13 +1,14 @@
 name: frontoffice
 services:
-  PostgreSQL:
+  frontoffice_db:
     image: postgres:17.4
 #    volumes:
 #      - ~/Downloads/frontoffice/frontoffice_db/postgresql/:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=frontoffice_user
-      - POSTGRES_DB=frontoffice_db
-      - POSTGRES_HOST_AUTH_METHOD=trust
+      POSTGRES_USER: frontoffice_user
+      POSTGRES_DB: frontoffice_db
+      POSTGRES_PASSWORD: frontoffice_password
+#      - POSTGRES_HOST_AUTH_METHOD=trust
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready --username=$${POSTGRES_USER} --dbname=$${POSTGRES_DB}']
       interval: 5s
@@ -16,4 +17,14 @@ services:
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
-      - 127.0.0.1:5432:5432
+      - 5432:5432
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://frontoffice_db:5432/frontoffice_db
+      SPRING_DATASOURCE_USERNAME: frontoffice_user
+      SPRING_DATASOURCE_PASSWORD: frontoffice_password
+    depends_on:
+      - frontoffice_db

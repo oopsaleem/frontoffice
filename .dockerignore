@@ -1,0 +1,7 @@
+.git
+.mvn
+mvnw
+mvnw.cmd
+.idea
+.DS_Store
+frontoffice_db
