@@ -1,14 +1,15 @@
 package nl.tochbedrijf.frontoffice.services;
 
 
+import nl.tochbedrijf.frontoffice.controller.exceptions.BookNotFoundException;
 import nl.tochbedrijf.frontoffice.domain.Book;
 import nl.tochbedrijf.frontoffice.repository.BookRepository;
-import nl.tochbedrijf.frontoffice.services.dtos.BookDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 @Service
 public class BookService {
@@ -19,65 +20,53 @@ public class BookService {
     }
 
     public List<BookDTO> getAllBooks() {
-        return bookRepository.findAll()
+        return bookRepository.findByActiveIsTrue()
                 .stream()
-                .map(this::convertToDto)
+                .map(Converter::convertToDto)
                 .collect(Collectors.toList());
     }
 
     public BookDTO getBookById(Long id) {
-        return bookRepository.findById(id)
-                .map(this::convertToDto)
+        return bookRepository.findByActiveIsTrueAndIdEquals(id)
+                .map(Converter::convertToDto)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new BookNotFoundException( // This is the way Exception should be defined
                                 "Book not found with ID: " + id));
     }
 
     public List<BookDTO> findBooksByTitleContains(String title) {
-        return bookRepository.findBooksByTitleContains(title)
+        return bookRepository.findByActiveIsTrueAndTitleContains(title)
                 .stream()
-                .map(this::convertToDto)
+                .map(Converter::convertToDto)
                 .collect(Collectors.toList());
     }
 
     public BookDTO createBook(BookDTO bookDTO) {
-        Book newBook = convertToEntity(bookDTO);
+        Book newBook = Converter.convertToEntity(bookDTO);
         Book savedBook = bookRepository.save(newBook);
-        return convertToDto(savedBook);
+        return Converter.convertToDto(savedBook);
     }
 
     public BookDTO updateBook(Long id, BookDTO updatedBook) {
-        return bookRepository.findById(id)
+        return bookRepository.findByActiveIsTrueAndIdEquals(id)
                 .map(bookItem -> {
-                    bookItem.setTitle(updatedBook.getTitle());
-                    bookItem.setAuthor(updatedBook.getAuthor());
-                    return convertToDto(bookRepository.save(bookItem));
+                    bookItem.setTitle(updatedBook.title());
+                    bookItem.setAuthor(updatedBook.author());
+                    return Converter.convertToDto(bookRepository.save(bookItem));
                 })
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new BookNotFoundException(
                                 "Book not found with ID: " + id));
     }
 
     public void deleteBook(Long id) {
-        if (bookRepository.existsById(id)) {
-            bookRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("Book not found with ID: " + id);
-        }
+        Optional<Book> optById = bookRepository.findByActiveIsTrueAndIdEquals(id);
+        if(optById.isEmpty())
+            throw new BookNotFoundException("Book not found with ID: " + id);
+
+        Book book = optById.get();
+        book.setActive(false);
+        bookRepository.save(book);
     }
 
-
-    // Utils code
-    private BookDTO convertToDto(Book book) {
-        return new BookDTO(book.getId(), book.getTitle(), book.getAuthor());
-    }
-
-    private Book convertToEntity(BookDTO bookDTO) {
-        Book book = new Book();
-        book.setId(bookDTO.getId()); // ID might be null for new book
-        book.setTitle(bookDTO.getTitle());
-        book.setAuthor(bookDTO.getAuthor());
-        book.setInternalCode(UUID.randomUUID().toString());
-        return book;
-    }
 }

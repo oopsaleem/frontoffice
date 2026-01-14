@@ -15,6 +15,7 @@ public class Book {
     private String title;
     private String author;
     private String internalCode;
+    private Boolean active;
 
     // constructors, getters, setters
     public Book() {}
@@ -63,6 +64,14 @@ public class Book {
 
     public void setInternalCode(String internalCode) {
         this.internalCode = internalCode;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     @Override

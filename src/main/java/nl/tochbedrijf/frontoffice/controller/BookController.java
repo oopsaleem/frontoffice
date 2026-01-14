@@ -1,7 +1,7 @@
 package nl.tochbedrijf.frontoffice.controller;
 
 import nl.tochbedrijf.frontoffice.services.BookService;
-import nl.tochbedrijf.frontoffice.services.dtos.BookDTO;
+import nl.tochbedrijf.frontoffice.services.BookDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

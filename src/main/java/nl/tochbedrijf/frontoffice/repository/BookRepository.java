@@ -4,7 +4,11 @@ import nl.tochbedrijf.frontoffice.domain.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
-    List<Book> findBooksByTitleContains(String title);
+
+    List<Book> findByActiveIsTrue();
+    Optional<Book> findByActiveIsTrueAndIdEquals(Long id);
+    List<Book> findByActiveIsTrueAndTitleContains(String title);
 }
