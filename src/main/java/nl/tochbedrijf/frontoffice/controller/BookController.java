@@ -2,6 +2,7 @@ package nl.tochbedrijf.frontoffice.controller;
 
 import nl.tochbedrijf.frontoffice.services.BookService;
 import nl.tochbedrijf.frontoffice.services.BookDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<BookDTO> createBook(@RequestBody BookDTO bookDTO) {
-        return ResponseEntity.ok(bookService.createBook(bookDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.createBook(bookDTO));
     }
 
     @PutMapping("/{id}")

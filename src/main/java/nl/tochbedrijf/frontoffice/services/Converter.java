@@ -10,12 +10,6 @@ public class Converter {
     }
 
     static Book convertToEntity(BookDTO bookDTO) {
-        Book book = new Book();
-        book.setId(bookDTO.id()); // ID might be null for new book
-        book.setTitle(bookDTO.title());
-        book.setAuthor(bookDTO.author());
-        book.setInternalCode(UUID.randomUUID().toString());
-        book.setActive(true);
-        return book;
+        return new Book(bookDTO.id(), bookDTO.title(), bookDTO.author(), UUID.randomUUID().toString(), true);
     }
 }

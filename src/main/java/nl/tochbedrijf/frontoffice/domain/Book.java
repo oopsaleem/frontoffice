@@ -20,17 +20,12 @@ public class Book {
     // constructors, getters, setters
     public Book() {}
 
-    public Book(Long id, String title, String author) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-    }
-
-    public Book(Long id, String title, String author, String internalCode) {
+    public Book(Long id, String title, String author, String internalCode, boolean active) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.internalCode = internalCode;
+        this.active = active;
     }
 
 
@@ -66,7 +61,7 @@ public class Book {
         this.internalCode = internalCode;
     }
 
-    public Boolean getActive() {
+    public Boolean isActive() {
         return active;
     }
 
@@ -81,6 +76,7 @@ public class Book {
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", internalCode='" + internalCode + '\'' +
+                ", active=" + active +
                 '}';
     }
 }
